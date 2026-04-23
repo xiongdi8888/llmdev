@@ -14,8 +14,11 @@ app.secret_key = os.environ['ENV_APP_KEY']
 def index():
     if 'thread_id' not in session:
         session['thread_id'] = str(uuid.uuid4())
+        print(f"New session created: {session['thread_id']}")
+    else:
+        print(f"Using existing session: {session['thread_id']}")
     if request.method == 'GET':
-        memory.storage.clear()
+        #memory.storage.clear()
         return make_response(render_template('index.html', messages=[]))
     user_message = request.form['user_message']
     get_bot_response(user_message, memory, session['thread_id'])

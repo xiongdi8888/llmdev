@@ -64,8 +64,9 @@ def build_graph(model_name, memory):
     graph_builder.set_entry_point('chatbot')
     return graph_builder.compile(checkpointer=memory)
 
-def stream_graph_updates(graph: StateGraph, user_message: str, thread_id):
-    response = graph.invoke({'messages': [('user', user_message)]}, {'configurable': {'thread_id': thread_id}}, stream_mode='values')
+def stream_graph_updates(user_message: str, thread_id):
+    global graphs
+    response = graphs['thread_id'].invoke({'messages': [('user', user_message)]}, {'configurable': {'thread_id': thread_id}}, stream_mode='values')
     return response['messages'][-1].content
 
 def get_bot_response(user_message, memory, thread_id):
@@ -77,9 +78,8 @@ def get_bot_response(user_message, memory, thread_id):
     # support multi session
     global graphs
     if thread_id not in graphs:
-        graphs[thread_id] = build_graph(MODEL_NAME, memory)
-    graph = graphs[thread_id]
-    return stream_graph_updates(graph, user_message, thread_id)
+        graphs['thread_id'] = build_graph(MODEL_NAME, memory)
+    return stream_graph_updates(user_message, thread_id)
 
 def get_messages_list(memory, thread_id):
     messages = []
