@@ -66,7 +66,7 @@ def build_graph(model_name, memory):
 
 def stream_graph_updates(user_message: str, thread_id):
     global graphs
-    response = graphs['thread_id'].invoke({'messages': [('user', user_message)]}, {'configurable': {'thread_id': thread_id}}, stream_mode='values')
+    response = graphs[thread_id].invoke({'messages': [('user', user_message)]}, {'configurable': {'thread_id': thread_id}}, stream_mode='values')
     return response['messages'][-1].content
 
 def get_bot_response(user_message, memory, thread_id):
@@ -78,7 +78,7 @@ def get_bot_response(user_message, memory, thread_id):
     # support multi session
     global graphs
     if thread_id not in graphs:
-        graphs['thread_id'] = build_graph(MODEL_NAME, memory)
+        graphs[thread_id] = build_graph(MODEL_NAME, memory)
     return stream_graph_updates(user_message, thread_id)
 
 def get_messages_list(memory, thread_id):
