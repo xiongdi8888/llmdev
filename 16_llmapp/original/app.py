@@ -1,12 +1,14 @@
 import os
 import sys
 import uuid
+from dotenv import load_dotenv
+load_dotenv('.env')
 from flask import Flask, render_template, request, make_response, session
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from original.graph import get_bot_response, get_messages_list, memory
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'
+app.secret_key = os.environ['ENV_APP_KEY']
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
